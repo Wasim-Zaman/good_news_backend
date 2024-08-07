@@ -26,6 +26,7 @@ var options = {
   apis: [
     path.join(__dirname, "../docs/swagger/testDocs.js"),
     path.join(__dirname, "../docs/swagger/admin.js"),
+    path.join(__dirname, "../docs/swagger/category.js"),
     // add more paths...
   ],
 };

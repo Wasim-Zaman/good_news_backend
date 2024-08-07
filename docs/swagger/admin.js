@@ -1,16 +1,16 @@
 /**
  * @swagger
  * tags:
- *   name: Admin-Auth
+ *   name: Admin
  *   description: Authentication routes
  */
 
 /**
  * @swagger
- * /api/auth/v1/login:
+ * /api/admin/v1/login:
  *   post:
  *     summary: Login an admin
- *     tags: [Admin-Auth]
+ *     tags: [Admin]
  *     requestBody:
  *       required: true
  *       content:
