@@ -27,3 +27,18 @@ model Category {
   mainCategory String? 
   name        String
 }
+
+model Blog {
+  id             Int      @id @default(autoincrement())
+  image          String?  
+  title          String
+  visibility     String?  
+  views          Int      @default(0)
+  publishDateTime DateTime
+  lastModified   DateTime @updatedAt
+  status         Int      @default(1)
+  type           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
