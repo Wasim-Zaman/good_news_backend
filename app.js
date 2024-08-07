@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 
 const swaggerSpec = require("./config/swagger");
+const CustomError = require("./utils/customError");
 const response = require("./utils/response");
 const testRoutes = require("./routes/sample");
 const adminRoutes = require("./routes/admin");
@@ -32,12 +33,19 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  const status = error.statusCode || 500;
-  const message =
-    error.message ||
-    "An error occurred while trying to process your request. Please try again later.";
-  const data = null;
-  const success = false;
+  console.log(error);
+  let status = 500;
+  let message =
+    "An error occurred while processing your request. Please try again later.";
+  let data = null;
+  let success = false;
+
+  if (error instanceof CustomError) {
+    status = error.statusCode || 500;
+    message = error.message || message;
+    data = error.data || null;
+  }
+
   res.status(status).json(response(status, success, message, data));
 });
 
