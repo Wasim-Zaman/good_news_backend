@@ -20,21 +20,23 @@
 
 /**
  * @swagger
- * /api/live-news/v1/live-news:
+ * /api/liveNews/v1/live-news:
  *   post:
  *     summary: Create a new live news item
  *     tags: [LiveNews]
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               media:
  *                 type: string
- *                 example: "Media Source"
- *                 description: The media source of the live news
+ *                 format: binary
+ *                 description: The media file of the live news
  *               name:
  *                 type: string
  *                 example: "News Name"
@@ -79,7 +81,7 @@
 
 /**
  * @swagger
- * /api/live-news/v1/live-news/{id}:
+ * /api/liveNews/v1/live-news/{id}:
  *   get:
  *     summary: Retrieve a live news item by ID
  *     tags: [LiveNews]
@@ -146,7 +148,7 @@
 
 /**
  * @swagger
- * /api/live-news/v1/live-news/all:
+ * /api/liveNews/v1/live-news/all:
  *   get:
  *     summary: Retrieve all live news items
  *     tags: [LiveNews]
@@ -206,7 +208,7 @@
 
 /**
  * @swagger
- * /api/live-news/v1/live-news:
+ * /api/liveNews/v1/live-news:
  *   get:
  *     summary: Retrieve paginated live news items with optional search query
  *     tags: [LiveNews]
@@ -297,10 +299,12 @@
 
 /**
  * @swagger
- * /api/live-news/v1/live-news/{id}:
+ * /api/liveNews/v1/live-news/{id}:
  *   put:
  *     summary: Update a live news item
  *     tags: [LiveNews]
+ *     consumes:
+ *       - multipart/form-data
  *     parameters:
  *       - in: path
  *         name: id
@@ -311,13 +315,14 @@
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               media:
  *                 type: string
- *                 description: The media source of the live news
+ *                 format: binary
+ *                 description: The new media file of the live news
  *               name:
  *                 type: string
  *                 description: The name of the live news
@@ -380,7 +385,7 @@
 
 /**
  * @swagger
- * /api/live-news/v1/live-news/{id}:
+ * /api/liveNews/v1/live-news/{id}:
  *   delete:
  *     summary: Delete a live news item
  *     tags: [LiveNews]

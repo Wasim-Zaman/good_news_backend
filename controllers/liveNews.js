@@ -1,10 +1,16 @@
 const LiveNews = require("../models/liveNews");
 const CustomError = require("../utils/customError");
 const generateResponse = require("../utils/response");
+const fileHelper = require("../utils/file");
 
 exports.createLiveNews = async (req, res, next) => {
   try {
-    const { media, name, uri } = req.body;
+    const { name, uri } = req.body;
+    const media = req.file ? req.file.path : null;
+
+    if (!media) {
+      throw new CustomError("Media file is required", 400);
+    }
 
     const liveNews = await LiveNews.create({
       media,
@@ -95,13 +101,19 @@ exports.getLiveNews = async (req, res, next) => {
 
 exports.updateLiveNews = async (req, res, next) => {
   const { id } = req.params;
-  const { media, name, uri } = req.body;
+  const { name, uri } = req.body;
 
   try {
     console.log(`Attempting to update live news with ID: ${id}`);
     const liveNews = await LiveNews.findById(id);
     if (!liveNews) {
       throw new CustomError("Live news not found", 404);
+    }
+
+    let media = req.file ? req.file.path : liveNews.media;
+
+    if (req.file) {
+      await fileHelper.deleteFile(liveNews.media);
     }
 
     const updatedLiveNews = await LiveNews.updateById(id, {
@@ -128,6 +140,7 @@ exports.deleteLiveNews = async (req, res, next) => {
       throw new CustomError("Live news not found", 404);
     }
 
+    await fileHelper.deleteFile(liveNews.media);
     await LiveNews.deleteById(id);
 
     res

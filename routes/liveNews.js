@@ -2,25 +2,37 @@ const express = require("express");
 
 const controller = require("../controllers/liveNews");
 const isAdmin = require("../middleware/is-admin");
+// const { uploadSingle } = require("../config/multer");
+const { uploadSingle } = require("multer-configurator");
 
 const router = express.Router();
 
-// Create a new live news item
-router.post("/v1/live-news", isAdmin, controller.createLiveNews);
+// Create a new live news
+router.post(
+  "/v1/live-news",
+  isAdmin,
+  uploadSingle({ filename: "media" }),
+  controller.createLiveNews
+);
 
-// Get a live news item by ID
+// Get a live news by ID
 router.get("/v1/live-news/:id", controller.getLiveNewsById);
 
-// Get all live news items
+// Get all live news
 router.get("/v1/live-news/all", controller.getAllLiveNews);
 
-// Get paginated live news items with optional search query
+// Get paginated live news with optional search query
 router.get("/v1/live-news", controller.getLiveNews);
 
-// Update a live news item by ID
-router.put("/v1/live-news/:id", isAdmin, controller.updateLiveNews);
+// Update a live news by ID
+router.put(
+  "/v1/live-news/:id",
+  isAdmin,
+  uploadSingle("media"),
+  controller.updateLiveNews
+);
 
-// Delete a live news item by ID
+// Delete a live news by ID
 router.delete("/v1/live-news/:id", isAdmin, controller.deleteLiveNews);
 
 module.exports = router;
