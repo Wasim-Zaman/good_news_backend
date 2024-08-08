@@ -12,22 +12,17 @@ exports.createBlog = async (req, res, next) => {
       throw new CustomError("Image is required", 400);
     }
 
-    console.log(`Attempting to create blog with title: ${title}`);
-    const existingBlog = await Blog.findByTitle(title);
-    if (!existingBlog) {
-      const blog = await Blog.create({
-        image,
-        title,
-        visibility,
-        publishDateTime: new Date(publishDateTime),
-        status: Number(status),
-        type,
-      });
-      console.log(`Blog created with title: ${title}`);
-      res.status(201).json(generateResponse(201, true, "Blog created", blog));
-    } else {
-      throw new CustomError("Blog already exists with this title", 400);
-    }
+    const blog = await Blog.create({
+      image,
+      title,
+      visibility,
+      publishDateTime: new Date(publishDateTime),
+      status: Number(status),
+      type,
+    });
+
+    console.log(`Blog created with title: ${title}`);
+    res.status(201).json(generateResponse(201, true, "Blog created", blog));
   } catch (error) {
     console.log(`Error in createBlog: ${error.message}`);
     next(error);

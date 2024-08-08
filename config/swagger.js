@@ -1,5 +1,6 @@
 const path = require("path");
 const swaggerJSDoc = require("swagger-jsdoc");
+require("dotenv").config();
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -13,6 +14,10 @@ const swaggerDefinition = {
     },
   },
   servers: [
+    {
+      url: process.env.DOMAIN,
+      description: "Production server",
+    },
     {
       url: "http://localhost:8080",
       description: "Development server",
@@ -28,6 +33,7 @@ var options = {
     path.join(__dirname, "../docs/swagger/admin.js"),
     path.join(__dirname, "../docs/swagger/category.js"),
     path.join(__dirname, "../docs/swagger/blog.js"),
+    path.join(__dirname, "../docs/swagger/ad.js"),
     // add more paths...
   ],
 };

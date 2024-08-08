@@ -42,3 +42,16 @@ model Blog {
   updatedAt      DateTime @updatedAt
 }
 
+model Ad {
+  id        Int      @id @default(autoincrement())
+  media     String
+  title     String
+  timestamp String
+  frequency Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ads")
+}
+
+

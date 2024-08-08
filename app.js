@@ -13,6 +13,7 @@ const testRoutes = require("./routes/sample");
 const adminRoutes = require("./routes/admin");
 const categoryRoutes = require("./routes/category");
 const blogRoutes = require("./routes/blog");
+const adRoutes = require("./routes/ad");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,12 +22,13 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Create folder with name images and uncomment below line for serving image statically
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/images", express.static(path.join(__dirname, "uploads")));
 
 app.use(testRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/blog", blogRoutes);
+app.use("/api/ad", blogRoutes);
 
 // Add your routes...
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
