@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
@@ -22,14 +22,14 @@ model Admin {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   image       String?  
   mainCategory String? 
   name        String
 }
 
 model Blog {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(uuid())
   image          String?  
   title          String
   visibility     String?  
@@ -43,7 +43,7 @@ model Blog {
 }
 
 model Ad {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   media     String
   title     String
   timestamp String
@@ -52,6 +52,14 @@ model Ad {
   updatedAt DateTime @updatedAt
 
   @@map("ads")
+}
+
+model News {
+  id        String   @id @default(uuid())
+  image     String  
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 

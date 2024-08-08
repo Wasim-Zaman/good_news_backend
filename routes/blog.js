@@ -7,7 +7,7 @@ const { uploadSingle } = require("../config/multer");
 const router = express.Router();
 
 // Create a new blog
-router.post("/v1/blogs", isAdmin, uploadSingle(), controller.createBlog);
+router.post("/v1/blogs", isAdmin, uploadSingle("image"), controller.createBlog);
 
 // Get a blog by ID
 router.get("/v1/blogs/:id", controller.getBlogById);
@@ -19,7 +19,12 @@ router.get("/v1/blogs/all", controller.getAllBlogs);
 router.get("/v1/blogs", controller.getBlogs);
 
 // Update a blog by ID
-router.put("/v1/blogs/:id", isAdmin, uploadSingle(), controller.updateBlog);
+router.put(
+  "/v1/blogs/:id",
+  isAdmin,
+  uploadSingle("image"),
+  controller.updateBlog
+);
 
 // Delete a blog by ID
 router.delete("/v1/blogs/:id", isAdmin, controller.deleteBlog);

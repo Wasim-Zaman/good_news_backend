@@ -14,6 +14,7 @@ const adminRoutes = require("./routes/admin");
 const categoryRoutes = require("./routes/category");
 const blogRoutes = require("./routes/blog");
 const adRoutes = require("./routes/ad");
+const newsRoutes = require("./routes/news");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,7 +29,8 @@ app.use(testRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/blog", blogRoutes);
-app.use("/api/ad", blogRoutes);
+app.use("/api/ad", adRoutes);
+app.use("/api/news", newsRoutes);
 
 // Add your routes...
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

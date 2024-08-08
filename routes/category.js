@@ -10,7 +10,7 @@ const router = express.Router();
 router.post(
   "/v1/categories",
   isAdmin,
-  uploadSingle(),
+  uploadSingle("image"),
   controller.createCategory
 );
 
@@ -27,7 +27,7 @@ router.get("/v1/categories", controller.getCategories);
 router.put(
   "/v1/categories/:id",
   isAdmin,
-  uploadSingle(),
+  uploadSingle("image"),
   controller.updateCategory
 );
 
