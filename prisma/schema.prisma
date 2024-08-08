@@ -62,4 +62,23 @@ model News {
   updatedAt DateTime @updatedAt
 }
 
+model LiveNews {
+  id        String   @id @default(uuid())
+  media     String
+  name      String
+  uri       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
+model Rss {
+  id        String   @id @default(uuid())
+  category  String
+  language  String
+  name      String
+  url       String
+  image     String?  // Optional field for image URL or path
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
