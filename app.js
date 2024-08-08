@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const bodyParser = require("body-parser");
+const cors = require("cors-magic");
 require("dotenv").config();
 
 const swaggerSpec = require("./config/swagger");
@@ -22,6 +23,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 // Create folder with name images and uncomment below line for serving image statically
 app.use("/images", express.static(path.join(__dirname, "uploads")));
