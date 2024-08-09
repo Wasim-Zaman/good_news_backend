@@ -3,7 +3,7 @@ const express = require("express");
 const controller = require("../controllers/liveNews");
 const isAdmin = require("../middleware/is-admin");
 // const { uploadSingle } = require("../config/multer");
-const { uploadSingle } = require("multer-configurator");
+const { uploadSingle } = require("multermate");
 
 const router = express.Router();
 
