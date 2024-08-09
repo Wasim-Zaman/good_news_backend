@@ -18,6 +18,7 @@ const newsRoutes = require("./routes/news");
 const liveNews = require("./routes/liveNews");
 const rssRoutes = require("./routes/rss");
 const ePaperRoutes = require("./routes/ePaper");
+const searchLogRoutes = require("./routes/searchLog");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -38,6 +39,7 @@ app.use("/api/news", newsRoutes);
 app.use("/api/liveNews", liveNews);
 app.use("/api/rss", rssRoutes);
 app.use("/api/ePaper", ePaperRoutes);
+app.use("/api/searchLog", searchLogRoutes);
 
 // Add your routes...
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
