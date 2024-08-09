@@ -34,7 +34,7 @@ model Blog {
   title          String
   visibility     String?  
   views          Int      @default(0)
-  publishDateTime DateTime
+  publishDateTime DateTime?
   lastModified   DateTime @updatedAt
   status         Int      @default(1)
   type           String
