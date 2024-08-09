@@ -101,28 +101,37 @@ exports.updateEPaper = async (req, res, next) => {
 
   try {
     console.log(`Attempting to update e-paper with ID: ${id}`);
+
+    // Find the existing e-paper by ID
     const ePaper = await EPaper.findById(id);
     if (!ePaper) {
       throw new CustomError("E-paper not found", 404);
     }
 
-    let media =
+    // Determine if new media or PDF files have been uploaded; otherwise, use the existing ones
+    const media =
       req.files && req.files.media ? req.files.media[0].path : ePaper.media;
-    let pdf = req.files && req.files.pdf ? req.files.pdf[0].path : ePaper.pdf;
+    const pdf = req.files && req.files.pdf ? req.files.pdf[0].path : ePaper.pdf;
 
+    // If new media is uploaded, delete the old one
     if (req.files && req.files.media) {
       await fileHelper.deleteFile(ePaper.media);
     }
 
+    // If new PDF is uploaded, delete the old one
     if (req.files && req.files.pdf) {
       await fileHelper.deleteFile(ePaper.pdf);
     }
 
-    const updatedEPaper = await EPaper.updateById(id, {
-      media,
-      name,
-      pdf,
-    });
+    // Update the e-paper with the new data
+    ePaper.media = media;
+    ePaper.pdf = pdf;
+    ePaper.name = name;
+
+    // Save the updated e-paper
+    const updatedEPaper = await ePaper.save();
+
+    console.log(`E-paper with ID: ${id} updated successfully`);
     res
       .status(200)
       .json(generateResponse(200, true, "E-paper updated", updatedEPaper));

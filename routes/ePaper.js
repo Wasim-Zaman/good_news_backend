@@ -1,5 +1,5 @@
 const express = require("express");
-const multerConfig = require("multer-configurator");
+const multerConfig = require("multermate");
 const controller = require("../controllers/ePaper");
 const isAdmin = require("../middleware/is-admin");
 
