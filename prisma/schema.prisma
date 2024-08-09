@@ -91,3 +91,14 @@ model EPaper {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model SearchLog {
+  id          String   @id @default(uuid()) // UUID as the unique identifier
+  searchLog   String   // The search term logged
+  count       Int      // Number of times the term was searched
+  searchDate  DateTime // The date and time when the search was logged
+
+  createdAt   DateTime @default(now()) // Timestamp of creation
+  updatedAt   DateTime @updatedAt // Timestamp of the last update
+}
+
