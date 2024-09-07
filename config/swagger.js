@@ -19,7 +19,7 @@ const swaggerDefinition = {
       description: "Production server",
     },
     {
-      url: "http://localhost:8080",
+      url: "http://localhost:4000",
       description: "Development server",
     },
     // add more hosts...
@@ -40,6 +40,7 @@ var options = {
     path.join(__dirname, "../docs/swagger/ePaper.js"),
     path.join(__dirname, "../docs/swagger/searchLog.js"),
     path.join(__dirname, "../docs/swagger/cms.js"),
+    path.join(__dirname, "../docs/swagger/user.js"),
     // add more paths...
   ],
 };

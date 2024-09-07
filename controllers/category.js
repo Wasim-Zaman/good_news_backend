@@ -1,5 +1,5 @@
 const Category = require("../models/category");
-const CustomError = require("../utils/customError");
+const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const fileHelper = require("../utils/file");
 

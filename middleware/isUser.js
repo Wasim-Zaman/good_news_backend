@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const CustomError = require("../utils/error");
+const CustomError = require("../utils/customError");
 
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
@@ -47,7 +47,7 @@ module.exports = (req, res, next) => {
     return;
   }
 
-  req.email = decodedToken.email;
+  req.user = decodedToken;
 
   next();
 };

@@ -48,29 +48,14 @@ exports.login = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
-  const {
-    fullName,
-    fatherName,
-    epicId,
-    mobileNumber,
-    gender,
-    age,
-    email,
-    legislativeConstituency,
-    boothNameOrNumber,
-  } = req.body;
+  const { name, mobileNumber } = req.body;
 
   try {
-    // Check if the mobile number from the token matches the mobile number in the request
-    if (req.mobileNumber !== mobileNumber) {
-      throw new CustomError("Unauthorized: Mobile number mismatch", 401);
-    }
-
     // Find the user by mobile number
     let user = await User.findByMobileNumber(mobileNumber);
     if (!user) {
       throw new CustomError(
-        "User not found with the entered mobile number",
+        "User not found with the provided mobile number",
         404
       );
     }
@@ -85,15 +70,7 @@ exports.updateUser = async (req, res, next) => {
 
     // Update user details
     user = await User.updateById(user.id, {
-      fullName: fullName || user.fullName,
-      fatherName: fatherName || user.fatherName,
-      epicId: epicId || user.epicId,
-      gender: gender || user.gender,
-      age: Number(age || user.age),
-      email: email || user.email,
-      legislativeConstituency:
-        legislativeConstituency || user.legislativeConstituency,
-      boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber,
+      name: name || user.name,
       image,
     });
 
@@ -170,46 +147,15 @@ exports.getUser = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
   try {
     // Extract data from request body
-    const {
-      fullName,
-      fatherName,
-      epicId,
-      mobileNumber,
-      legislativeConstituency,
-      boothNameOrNumber,
-      gender,
-      age,
-      email,
-      timeZone,
-      status,
-    } = req.body;
-
-    // Check if a user with the same mobile number, fcmToken, or email already exists
-    const existingUser =
-      (await User.findByMobileNumber(mobileNumber)) ||
-      (await User.findByEmail(email));
-    if (existingUser) {
-      throw new CustomError(
-        "User with this mobile number or email already exists",
-        409
-      );
-    }
+    const { name, mobileNumber, timeZone } = req.body;
 
     // Create the new user
     const newUser = await User.create({
-      fullName,
-      fatherName,
-      epicId,
+      name,
       image: null,
       mobileNumber,
       fcmToken: "",
-      legislativeConstituency,
-      boothNameOrNumber,
-      gender,
-      age,
-      email,
       timeZone: timeZone || "UTC",
-      status: status !== undefined ? Number(status) : 1,
     });
 
     // Return success response

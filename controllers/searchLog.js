@@ -1,5 +1,5 @@
 const SearchLog = require("../models/searchLog");
-const CustomError = require("../utils/customError");
+const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 
 exports.createSearchLog = async (req, res, next) => {

@@ -7,7 +7,7 @@ const cors = require("cors-magic");
 require("dotenv").config();
 
 const swaggerSpec = require("./config/swagger");
-const CustomError = require("./utils/customError");
+const CustomError = require("./utils/error");
 const response = require("./utils/response");
 const testRoutes = require("./routes/sample");
 const adminRoutes = require("./routes/admin");
@@ -20,6 +20,7 @@ const rssRoutes = require("./routes/rss");
 const ePaperRoutes = require("./routes/ePaper");
 const searchLogRoutes = require("./routes/searchLog");
 const cmsRoutes = require("./routes/cms");
+const userRoutes = require("./routes/user");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ app.use("/api/rss", rssRoutes);
 app.use("/api/ePaper", ePaperRoutes);
 app.use("/api/searchLog", searchLogRoutes);
 app.use("/api/cms", cmsRoutes);
+app.use("/api/users", userRoutes);
 
 // Add your routes...
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -70,5 +72,5 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(port, function () {
-  console.log("Server is running");
+  console.log(`Server is running on port ${port}`);
 });

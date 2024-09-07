@@ -1,5 +1,5 @@
 const Admin = require("../models/admin");
-const CustomError = require("../utils/customError");
+const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const JWT = require("../utils/jwt");
 const Bcrypt = require("../utils/bcrypt");
