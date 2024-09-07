@@ -112,4 +112,12 @@ model CMS {
   updatedAt   DateTime @updatedAt // Timestamp of the last update
 }
 
+model User {
+  id                      String   @id @default(uuid())
+  name                    String?
+  image                   String?
+  mobileNumber            String   @unique
+  fcmToken                String
 
+  @@map("user")
+}
