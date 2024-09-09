@@ -19,7 +19,7 @@ exports.createAd = async (req, res, next) => {
         media,
         title,
         timestamp,
-        frequency,
+        frequency: Number(frequency),
       });
       console.log(`Ad created with title: ${title}`);
       res.status(201).json(generateResponse(201, true, "Ad created", ad));
@@ -89,6 +89,7 @@ exports.updateAd = async (req, res, next) => {
 
   try {
     console.log(`Attempting to update ad with ID: ${id}`);
+
     const ad = await Ad.findById(id);
     if (!ad) {
       throw new CustomError("Ad not found", 404);
@@ -101,10 +102,10 @@ exports.updateAd = async (req, res, next) => {
     }
 
     const updatedAd = await Ad.updateById(id, {
-      media,
-      title,
-      timestamp,
-      frequency,
+      media: media ?? ad.media,
+      title: title ?? ad.title,
+      timestamp: timestamp ?? ad.timestamp,
+      frequency: Number(frequency || ad.frequency),
     });
     res.status(200).json(generateResponse(200, true, "Ad updated", updatedAd));
   } catch (error) {
