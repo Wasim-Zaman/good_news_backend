@@ -1,7 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const Joi = require('joi');
-const path = require('path');
 
 const CustomError = require('../utils/error');
 const response = require('../utils/response');
@@ -185,6 +184,61 @@ exports.addPostView = async (req, res, next) => {
     res.status(201).json(response(201, true, 'View added successfully', view));
   } catch (error) {
     console.log(`Error in addPostView: ${error.message}`);
+    next(error);
+  }
+};
+
+// Get paginated posts
+exports.getPaginatedPosts = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const [posts, totalCount] = await Promise.all([
+      prisma.post.findMany({
+        include: { views: true },
+        skip: Number(skip),
+        take: Number(limit),
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.post.count(),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.status(200).json(
+      response(200, true, 'Paginated posts retrieved successfully', {
+        posts,
+        currentPage: Number(page),
+        totalPages,
+        totalCount,
+      })
+    );
+  } catch (error) {
+    console.log(`Error in getPaginatedPosts: ${error.message}`);
+    next(error);
+  }
+};
+
+// Update post status (admin only)
+exports.updatePostStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['PUBLISHED', 'REJECTED', 'PENDING'].includes(status)) {
+      throw new CustomError('Invalid status', 400);
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: { id },
+      data: { status },
+      include: { views: true },
+    });
+
+    res.status(200).json(response(200, true, 'Post status updated successfully', updatedPost));
+  } catch (error) {
+    console.log(`Error in updatePostStatus: ${error.message}`);
     next(error);
   }
 };
