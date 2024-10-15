@@ -32,10 +32,16 @@ model Post {
   type        String
   image       String?
   description String
-  status      String
+  status      PostStatus
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   views       PostView[]
+}
+
+enum PostStatus {
+  PUBLISHED
+  REJECTED
+  PENDING
 }
 
 model PostView {

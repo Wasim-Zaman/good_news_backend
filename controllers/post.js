@@ -11,7 +11,7 @@ const { deleteFile, moveFile, fileExists, ensureDirectoryExists } = require('../
 const postSchema = Joi.object({
   type: Joi.string().required(),
   description: Joi.string().required(),
-  status: Joi.string().required(),
+  status: Joi.string().valid('PUBLISHED', 'REJECTED', 'PENDING').required(),
 });
 
 // Create a new post
