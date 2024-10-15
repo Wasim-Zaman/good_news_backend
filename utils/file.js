@@ -1,5 +1,5 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs').promises;
+const path = require('path');
 
 /**
  * Deletes a file based on the provided file path.
@@ -7,25 +7,70 @@ const path = require("path");
  * @returns {Promise<void>} - A promise that resolves when the file is deleted.
  * @throws {Error} - Throws an error if the file cannot be deleted.
  */
-const deleteFile = (filePath) => {
-  return new Promise((resolve, reject) => {
-    // Ensure the file path is an absolute path
+const deleteFile = async (filePath) => {
+  try {
     const absolutePath = path.resolve(filePath);
+    await fs.unlink(absolutePath);
+    console.log(`File successfully deleted at ${absolutePath}`);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.warn(`File not found at ${filePath}. It may have already been deleted.`);
+    } else {
+      console.error(`Error deleting file at ${filePath}:`, error);
+      throw new Error(`Unable to delete file at ${filePath}: ${error.message}`);
+    }
+  }
+};
 
-    fs.unlink(absolutePath, (err) => {
-      if (err) {
-        // If there's an error, reject the promise
-        console.error(`Error deleting file at ${absolutePath}:`, err);
-        reject(new Error(`Unable to delete file at ${absolutePath}`));
-      } else {
-        // Resolve the promise if file is successfully deleted
-        console.log(`File successfully deleted at ${absolutePath}`);
-        resolve();
-      }
-    });
-  });
+/**
+ * Ensures a directory exists, creating it if necessary.
+ * @param {string} dirPath - The path to the directory.
+ * @returns {Promise<void>} - A promise that resolves when the directory exists.
+ */
+const ensureDirectoryExists = async (dirPath) => {
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+  } catch (error) {
+    if (error.code !== 'EEXIST') {
+      throw error;
+    }
+  }
+};
+
+/**
+ * Moves a file from one location to another.
+ * @param {string} sourcePath - The current path of the file.
+ * @param {string} destPath - The destination path for the file.
+ * @returns {Promise<void>} - A promise that resolves when the file is moved.
+ */
+const moveFile = async (sourcePath, destPath) => {
+  try {
+    await ensureDirectoryExists(path.dirname(destPath));
+    await fs.rename(sourcePath, destPath);
+    console.log(`File successfully moved from ${sourcePath} to ${destPath}`);
+  } catch (error) {
+    console.error(`Error moving file from ${sourcePath} to ${destPath}:`, error);
+    throw new Error(`Unable to move file: ${error.message}`);
+  }
+};
+
+/**
+ * Checks if a file exists at the given path.
+ * @param {string} filePath - The path to check for file existence.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the file exists, false otherwise.
+ */
+const fileExists = async (filePath) => {
+  try {
+    await fs.access(filePath, fs.constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 module.exports = {
   deleteFile,
+  ensureDirectoryExists,
+  moveFile,
+  fileExists,
 };
