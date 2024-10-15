@@ -42,6 +42,7 @@ var options = {
     // path.join(__dirname, "../docs/swagger/cms.js"),
     path.join(__dirname, '../docs/swagger/user.js'),
     path.join(__dirname, '../docs/swagger/post.js'),
+    path.join(__dirname, '../docs/swagger/advertisement.js'),
     // add more paths...
   ],
 };

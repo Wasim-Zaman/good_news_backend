@@ -1,26 +1,28 @@
-const path = require("path");
+const path = require('path');
 
-const express = require("express");
-const swaggerUi = require("swagger-ui-express");
-const bodyParser = require("body-parser");
-const cors = require("cors-magic");
-require("dotenv").config();
+const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const bodyParser = require('body-parser');
+const cors = require('cors-magic');
+require('dotenv').config();
 
-const swaggerSpec = require("./config/swagger");
-const CustomError = require("./utils/error");
-const response = require("./utils/response");
-const testRoutes = require("./routes/sample");
-const adminRoutes = require("./routes/admin");
-const categoryRoutes = require("./routes/category");
-const blogRoutes = require("./routes/blog");
-const adRoutes = require("./routes/ad");
-const newsRoutes = require("./routes/news");
-const liveNews = require("./routes/liveNews");
-const rssRoutes = require("./routes/rss");
-const ePaperRoutes = require("./routes/ePaper");
-const searchLogRoutes = require("./routes/searchLog");
-const cmsRoutes = require("./routes/cms");
-const userRoutes = require("./routes/user");
+const swaggerSpec = require('./config/swagger');
+const CustomError = require('./utils/error');
+const response = require('./utils/response');
+const testRoutes = require('./routes/sample');
+const adminRoutes = require('./routes/admin');
+const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/post');
+const advertisementRoutes = require('./routes/advertisement');
+const categoryRoutes = require('./routes/category');
+const blogRoutes = require('./routes/blog');
+const adRoutes = require('./routes/ad');
+const newsRoutes = require('./routes/news');
+const liveNews = require('./routes/liveNews');
+const rssRoutes = require('./routes/rss');
+const ePaperRoutes = require('./routes/ePaper');
+const searchLogRoutes = require('./routes/searchLog');
+const cmsRoutes = require('./routes/cms');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,23 +32,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // Create folder with name images and uncomment below line for serving image statically
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(testRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/category", categoryRoutes);
-app.use("/api/blog", blogRoutes);
-app.use("/api/ad", adRoutes);
-app.use("/api/news", newsRoutes);
-app.use("/api/liveNews", liveNews);
-app.use("/api/rss", rssRoutes);
-app.use("/api/ePaper", ePaperRoutes);
-app.use("/api/searchLog", searchLogRoutes);
-app.use("/api/cms", cmsRoutes);
-app.use("/api/users", userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/post', postRoutes);
+app.use('/api/advertisement', advertisementRoutes);
+app.use('/api/category', categoryRoutes);
+app.use('/api/blog', blogRoutes);
+app.use('/api/ad', adRoutes);
+app.use('/api/news', newsRoutes);
+app.use('/api/liveNews', liveNews);
+app.use('/api/rss', rssRoutes);
+app.use('/api/ePaper', ePaperRoutes);
+app.use('/api/searchLog', searchLogRoutes);
+app.use('/api/cms', cmsRoutes);
 
 // Add your routes...
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req, res, next) => {
   const error = new CustomError(`No route found for ${req.originalUrl}`);
@@ -57,8 +61,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   console.log(error);
   let status = 500;
-  let message =
-    "An error occurred while processing your request. Please try again later.";
+  let message = 'An error occurred while processing your request. Please try again later.';
   let data = null;
   let success = false;
 

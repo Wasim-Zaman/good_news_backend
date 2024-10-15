@@ -32,13 +32,25 @@ model Post {
   type        String
   image       String?
   description String
-  status      PostStatus
+  status      Status
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   views       PostView[]
 }
 
-enum PostStatus {
+model Advertisement {
+  id                 String   @id @default(uuid())
+  advertisementType  String
+  bannerType         String?
+  image              String?
+  content            String?
+  postType           String
+  status             Status @default(PENDING)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+enum Status {
   PUBLISHED
   REJECTED
   PENDING

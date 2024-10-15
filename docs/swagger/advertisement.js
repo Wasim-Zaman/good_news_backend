@@ -1,63 +1,58 @@
 /**
  * @swagger
  * tags:
- *   name: Posts
- *   description: Post management
+ *   name: Advertisements
+ *   description: Advertisement management
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Post:
+ *     Advertisement:
  *       type: object
  *       required:
- *         - type
- *         - description
- *         - status
+ *         - advertisementType
+ *         - postType
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the post
- *         type:
+ *           description: The auto-generated id of the advertisement
+ *         advertisementType:
  *           type: string
- *           description: The type of the post
- *         description:
+ *           description: The type of the advertisement
+ *         bannerType:
  *           type: string
- *           description: The description of the post
+ *           description: The type of banner (if applicable)
+ *         content:
+ *           type: string
+ *           description: The content of the advertisement
+ *         postType:
+ *           type: string
+ *           description: The type of post for the advertisement
  *         status:
  *           type: string
- *           enum: [PUBLISHED, REJECTED, PENDING]
- *           description: The status of the post
+ *           enum: [PENDING, APPROVED, REJECTED]
+ *           description: The status of the advertisement
  *         image:
  *           type: string
- *           description: The path to the post's image file
+ *           description: The path to the advertisement's image file
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: The date the post was created
+ *           description: The date the advertisement was created
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: The date the post was last updated
+ *           description: The date the advertisement was last updated
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-/**
- * @swagger
- * /api/post/v1/post:
+ * /api/advertisement/v1/advertisement:
  *   post:
- *     summary: Create a new post
- *     tags: [Posts]
+ *     summary: Create a new advertisement
+ *     tags: [Advertisements]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -67,27 +62,30 @@
  *           schema:
  *             type: object
  *             required:
- *               - type
- *               - description
- *               - status
+ *               - advertisementType
+ *               - postType
  *             properties:
- *               type:
+ *               advertisementType:
  *                 type: string
- *               description:
+ *               bannerType:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               postType:
  *                 type: string
  *               status:
  *                 type: string
- *                 enum: [PUBLISHED, REJECTED, PENDING]
+ *                 enum: [PENDING, APPROVED, REJECTED]
  *               image:
  *                 type: string
  *                 format: binary
  *     responses:
  *       201:
- *         description: The post was successfully created
+ *         description: The advertisement was successfully created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Post'
+ *               $ref: '#/components/schemas/Advertisement'
  *       400:
  *         description: Invalid input
  *       401:
@@ -96,29 +94,29 @@
 
 /**
  * @swagger
- * /api/post/v1/posts:
+ * /api/advertisement/v1/advertisements:
  *   get:
- *     summary: Retrieve all posts
- *     tags: [Posts]
+ *     summary: Retrieve all advertisements
+ *     tags: [Advertisements]
  *     responses:
  *       200:
- *         description: A list of posts
+ *         description: A list of advertisements
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Post'
+ *                 $ref: '#/components/schemas/Advertisement'
  *       404:
- *         description: No posts found
+ *         description: No advertisements found
  */
 
 /**
  * @swagger
- * /api/post/v1/post/{id}:
+ * /api/advertisement/v1/advertisement/{id}:
  *   get:
- *     summary: Get a post by ID
- *     tags: [Posts]
+ *     summary: Get an advertisement by ID
+ *     tags: [Advertisements]
  *     parameters:
  *       - in: path
  *         name: id
@@ -127,16 +125,16 @@
  *           type: string
  *     responses:
  *       200:
- *         description: The post was found
+ *         description: The advertisement was found
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Post'
+ *               $ref: '#/components/schemas/Advertisement'
  *       404:
- *         description: Post not found
+ *         description: Advertisement not found
  *   put:
- *     summary: Update a post by ID
- *     tags: [Posts]
+ *     summary: Update an advertisement by ID
+ *     tags: [Advertisements]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -152,32 +150,36 @@
  *           schema:
  *             type: object
  *             properties:
- *               type:
+ *               advertisementType:
  *                 type: string
- *               description:
+ *               bannerType:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               postType:
  *                 type: string
  *               status:
  *                 type: string
- *                 enum: [PUBLISHED, REJECTED, PENDING]
+ *                 enum: [PENDING, APPROVED, REJECTED]
  *               image:
  *                 type: string
  *                 format: binary
  *     responses:
  *       200:
- *         description: The post was updated
+ *         description: The advertisement was updated
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Post'
+ *               $ref: '#/components/schemas/Advertisement'
  *       400:
  *         description: Invalid input
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Post not found
+ *         description: Advertisement not found
  *   delete:
- *     summary: Delete a post by ID
- *     tags: [Posts]
+ *     summary: Delete an advertisement by ID
+ *     tags: [Advertisements]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -188,19 +190,19 @@
  *           type: string
  *     responses:
  *       200:
- *         description: The post was deleted
+ *         description: The advertisement was deleted
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Post not found
+ *         description: Advertisement not found
  */
 
 /**
  * @swagger
- * /api/post/v1/posts/type/{type}:
+ * /api/advertisement/v1/advertisements/type/{type}:
  *   get:
- *     summary: Get posts by type
- *     tags: [Posts]
+ *     summary: Get advertisements by type
+ *     tags: [Advertisements]
  *     parameters:
  *       - in: path
  *         name: type
@@ -209,55 +211,23 @@
  *           type: string
  *     responses:
  *       200:
- *         description: A list of posts of the specified type
+ *         description: A list of advertisements of the specified type
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Post'
+ *                 $ref: '#/components/schemas/Advertisement'
  *       404:
- *         description: No posts found for this type
+ *         description: No advertisements found for this type
  */
 
 /**
  * @swagger
- * /api/post/v1/post/{id}/view:
- *   post:
- *     summary: Add a view to a post
- *     tags: [Posts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userId
- *             properties:
- *               userId:
- *                 type: string
- *     responses:
- *       201:
- *         description: View added successfully
- *       400:
- *         description: User ID is required
- *       404:
- *         description: Post not found
- */
-
-/**
- * @swagger
- * /api/post/v1/posts/paginated:
+ * /api/advertisement/v1/advertisements/paginated:
  *   get:
- *     summary: Get paginated posts
- *     tags: [Posts]
+ *     summary: Get paginated advertisements
+ *     tags: [Advertisements]
  *     parameters:
  *       - in: query
  *         name: page
@@ -288,10 +258,10 @@
  *                 data:
  *                   type: object
  *                   properties:
- *                     posts:
+ *                     advertisements:
  *                       type: array
  *                       items:
- *                         $ref: '#/components/schemas/Post'
+ *                         $ref: '#/components/schemas/Advertisement'
  *                     currentPage:
  *                       type: integer
  *                     totalPages:
@@ -304,10 +274,10 @@
 
 /**
  * @swagger
- * /api/post/v1/post/{id}/status:
+ * /api/advertisement/v1/advertisement/{id}/status:
  *   patch:
- *     summary: Update post status (admin only)
- *     tags: [Posts]
+ *     summary: Update advertisement status (admin only)
+ *     tags: [Advertisements]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -316,7 +286,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: Post ID
+ *         description: Advertisement ID
  *     requestBody:
  *       required: true
  *       content:
@@ -326,7 +296,7 @@
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [PUBLISHED, REJECTED, PENDING]
+ *                 enum: [PENDING, APPROVED, REJECTED]
  *     responses:
  *       200:
  *         description: Successful response
@@ -342,7 +312,7 @@
  *                 message:
  *                   type: string
  *                 data:
- *                   $ref: '#/components/schemas/Post'
+ *                   $ref: '#/components/schemas/Advertisement'
  *       400:
  *         description: Bad request
  *       401:
@@ -350,7 +320,7 @@
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Post not found
+ *         description: Advertisement not found
  *       500:
  *         description: Server error
  */
