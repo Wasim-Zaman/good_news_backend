@@ -22,6 +22,11 @@ model User {
   mobileNumber String     @unique
   fcmToken     String?
   timeZone     String?
+  language     String
+  state        String
+  district     String
+  constituency String
+  mandal       String
   postViews    PostView[]
   reporters    Reporter[]
   posts        Post[]

@@ -22,7 +22,7 @@
  * @swagger
  * /api/users/v1/users/login:
  *   post:
- *     summary: Login a user and get a JWT token
+ *     summary: Login a user or create a new user if not exists
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -30,19 +30,38 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - mobileNumber
+ *               - language
+ *               - state
+ *               - district
+ *               - constituency
+ *               - mandal
  *             properties:
  *               mobileNumber:
  *                 type: string
  *                 description: User's mobile number
- *                 example: "+1234567890"
  *               fcmToken:
  *                 type: string
  *                 description: Firebase Cloud Messaging token
- *                 example: "example_fcm_token"
  *               timeZone:
  *                 type: string
  *                 description: Time zone of the user
- *                 example: "UTC"
+ *               language:
+ *                 type: string
+ *                 description: User's language
+ *               state:
+ *                 type: string
+ *                 description: User's state
+ *               district:
+ *                 type: string
+ *                 description: User's district
+ *               constituency:
+ *                 type: string
+ *                 description: User's constituency
+ *               mandal:
+ *                 type: string
+ *                 description: User's mandal
  *     responses:
  *       200:
  *         description: User login successful
@@ -78,6 +97,21 @@
  *                         timeZone:
  *                           type: string
  *                           example: "UTC"
+ *                         language:
+ *                           type: string
+ *                           example: "English"
+ *                         state:
+ *                           type: string
+ *                           example: "California"
+ *                         district:
+ *                           type: string
+ *                           example: "Los Angeles"
+ *                         constituency:
+ *                           type: string
+ *                           example: "Downtown"
+ *                         mandal:
+ *                           type: string
+ *                           example: "Central"
  *                     token:
  *                       type: string
  *                       example: "jwt_token"
@@ -86,14 +120,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Validation error
+ *               $ref: '#/components/schemas/Error'
  */
 
 /**
@@ -108,19 +135,19 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - mobileNumber
  *             properties:
  *               name:
  *                 type: string
  *                 description: The name of the user
- *                 example: "John Doe"
  *               mobileNumber:
  *                 type: string
  *                 description: User's mobile number
- *                 example: "+1234567890"
  *               timeZone:
  *                 type: string
  *                 description: Time zone of the user
- *                 example: "UTC"
  *     responses:
  *       201:
  *         description: User created successfully
@@ -136,36 +163,13 @@
  *                   type: string
  *                   example: User created successfully
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     name:
- *                       type: string
- *                       example: "John Doe"
- *                     mobileNumber:
- *                       type: string
- *                       example: "+1234567890"
- *                     image:
- *                       type: string
- *                       example: null
- *                     timeZone:
- *                       type: string
- *                       example: "UTC"
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Validation error
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Validation error
+ *               $ref: '#/components/schemas/Error'
  *     security:
  *       - bearerAuth: []
  */
@@ -191,36 +195,13 @@
  *                   type: string
  *                   example: User retrieved successfully
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     name:
- *                       type: string
- *                       example: "John Doe"
- *                     mobileNumber:
- *                       type: string
- *                       example: "+1234567890"
- *                     image:
- *                       type: string
- *                       example: "path/to/image.jpg"
- *                     timeZone:
- *                       type: string
- *                       example: "UTC"
+ *                   $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Unauthorized
+ *               $ref: '#/components/schemas/Error'
  *     security:
  *       - bearerAuth: []
  */
@@ -264,88 +245,48 @@
  *                 data:
  *                   type: object
  *                   properties:
+ *                     users:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/User'
  *                     currentPage:
  *                       type: integer
  *                       example: 1
  *                     totalPages:
  *                       type: integer
  *                       example: 5
- *                     totalItems:
+ *                     totalCount:
  *                       type: integer
  *                       example: 50
- *                     users:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             example: "uuid"
- *                           name:
- *                             type: string
- *                             example: "John Doe"
- *                           mobileNumber:
- *                             type: string
- *                             example: "+1234567890"
- *                           image:
- *                             type: string
- *                             example: "path/to/image.jpg"
- *                           timeZone:
- *                             type: string
- *                             example: "UTC"
  *       404:
  *         description: No users found
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: No users found
+ *               $ref: '#/components/schemas/Error'
  *     security:
  *       - bearerAuth: []
  */
 
 /**
  * @swagger
- * /api/users/v1/users/{id}:
+ * /api/users/v1/users/{mobileNumber}:
  *   put:
  *     summary: Update a user's details
  *     tags: [User]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: mobileNumber
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the user to update
+ *         description: The mobile number of the user to update
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: The updated name of the user
- *                 example: "John Doe"
- *               mobileNumber:
- *                 type: string
- *                 description: The updated mobile number
- *                 example: "+1234567890"
- *               image:
- *                 type: string
- *                 description: The updated path to the user image
- *                 example: "path/to/new_image.jpg"
- *               timeZone:
- *                 type: string
- *                 description: The updated time zone
- *                 example: "UTC"
+ *             $ref: '#/components/schemas/UserUpdate'
  *     responses:
  *       200:
  *         description: User updated successfully
@@ -361,36 +302,13 @@
  *                   type: string
  *                   example: User updated successfully
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     name:
- *                       type: string
- *                       example: "John Doe"
- *                     mobileNumber:
- *                       type: string
- *                       example: "+1234567890"
- *                     image:
- *                       type: string
- *                       example: "path/to/new_image.jpg"
- *                     timeZone:
- *                       type: string
- *                       example: "UTC"
+ *                   $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: User not found
+ *               $ref: '#/components/schemas/Error'
  *     security:
  *       - bearerAuth: []
  */
@@ -422,19 +340,83 @@
  *                 message:
  *                   type: string
  *                   example: User deleted successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: User not found
+ *               $ref: '#/components/schemas/Error'
  *     security:
  *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "uuid"
+ *         name:
+ *           type: string
+ *           example: "John Doe"
+ *         mobileNumber:
+ *           type: string
+ *           example: "+1234567890"
+ *         image:
+ *           type: string
+ *           example: "path/to/image.jpg"
+ *         timeZone:
+ *           type: string
+ *           example: "UTC"
+ *         language:
+ *           type: string
+ *           example: "English"
+ *         state:
+ *           type: string
+ *           example: "California"
+ *         district:
+ *           type: string
+ *           example: "Los Angeles"
+ *         constituency:
+ *           type: string
+ *           example: "Downtown"
+ *         mandal:
+ *           type: string
+ *           example: "Central"
+ *     UserUpdate:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         mobileNumber:
+ *           type: string
+ *         fcmToken:
+ *           type: string
+ *         timeZone:
+ *           type: string
+ *         language:
+ *           type: string
+ *         state:
+ *           type: string
+ *         district:
+ *           type: string
+ *         constituency:
+ *           type: string
+ *         mandal:
+ *           type: string
+ *     Error:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: Error message
  */

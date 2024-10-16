@@ -4,7 +4,7 @@ const Joi = require('joi');
 
 const CustomError = require('../utils/error');
 const response = require('../utils/response');
-const { deleteFile, moveFile, fileExists, ensureDirectoryExists } = require('../utils/file');
+const { deleteFile, fileExists } = require('../utils/file');
 
 // Joi validation schema
 const postSchema = Joi.object({
