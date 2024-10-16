@@ -13,6 +13,7 @@ const advertisementSchema = Joi.object({
   content: Joi.string().allow(null, ''),
   postType: Joi.string().required(),
   status: Joi.string().valid('PENDING', 'APPROVED', 'REJECTED').default('PENDING'),
+  userId: Joi.string().required(),
 });
 
 // Create a new advertisement
@@ -23,11 +24,18 @@ exports.createAdvertisement = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
+    const user = await prisma.user.findUnique({ where: { id: value.userId } });
+    if (!user) {
+      throw new CustomError('User not found', 404);
+    }
+
     const newAdvertisement = await prisma.advertisement.create({
       data: {
         ...value,
         image: req.file ? req.file.path : null,
+        user: { connect: { id: value.userId } },
       },
+      include: { user: true },
     });
 
     res.status(201).json(response(201, true, 'Advertisement created successfully', newAdvertisement));
@@ -45,7 +53,9 @@ exports.createAdvertisement = async (req, res, next) => {
 // Get all advertisements
 exports.getAdvertisements = async (req, res, next) => {
   try {
-    const advertisements = await prisma.advertisement.findMany();
+    const advertisements = await prisma.advertisement.findMany({
+      include: { user: true },
+    });
 
     if (!advertisements.length) {
       throw new CustomError('No advertisements found', 404);
@@ -64,6 +74,7 @@ exports.getAdvertisementById = async (req, res, next) => {
     const { id } = req.params;
     const advertisement = await prisma.advertisement.findUnique({
       where: { id },
+      include: { user: true },
     });
 
     if (!advertisement) {
@@ -91,6 +102,11 @@ exports.updateAdvertisementById = async (req, res, next) => {
       throw new CustomError('Advertisement not found', 404);
     }
 
+    const user = await prisma.user.findUnique({ where: { id: value.userId } });
+    if (!user) {
+      throw new CustomError('User not found', 404);
+    }
+
     let updateData = { ...value };
     if (req.file) {
       updateData.image = req.file.path;
@@ -101,7 +117,11 @@ exports.updateAdvertisementById = async (req, res, next) => {
 
     const updatedAdvertisement = await prisma.advertisement.update({
       where: { id },
-      data: updateData,
+      data: {
+        ...updateData,
+        user: { connect: { id: value.userId } },
+      },
+      include: { user: true },
     });
 
     res.status(200).json(response(200, true, 'Advertisement updated successfully', updatedAdvertisement));
@@ -142,6 +162,7 @@ exports.getAdvertisementsByType = async (req, res, next) => {
     const { type } = req.params;
     const advertisements = await prisma.advertisement.findMany({
       where: { advertisementType: type },
+      include: { user: true },
     });
 
     if (!advertisements.length) {
@@ -166,6 +187,7 @@ exports.getPaginatedAdvertisements = async (req, res, next) => {
         skip: Number(skip),
         take: Number(limit),
         orderBy: { createdAt: 'desc' },
+        include: { user: true },
       }),
       prisma.advertisement.count(),
     ]);
@@ -199,6 +221,7 @@ exports.updateAdvertisementStatus = async (req, res, next) => {
     const updatedAdvertisement = await prisma.advertisement.update({
       where: { id },
       data: { status },
+      include: { user: true },
     });
 
     res.status(200).json(response(200, true, 'Advertisement status updated successfully', updatedAdvertisement));

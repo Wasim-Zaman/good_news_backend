@@ -13,13 +13,13 @@ const uploadConfig = {
 };
 
 // Advertisement routes
-router.post('/v1/advertisement', isAuth, uploadSingle(uploadConfig), adController.createAdvertisement);
-router.get('/v1/advertisements', adController.getAdvertisements);
-router.get('/v1/advertisement/:id', adController.getAdvertisementById);
-router.put('/v1/advertisement/:id', isAuth, uploadSingle(uploadConfig), adController.updateAdvertisementById);
-router.delete('/v1/advertisement/:id', isAdmin, adController.deleteAdvertisementById);
-router.get('/v1/advertisements/type/:type', adController.getAdvertisementsByType);
-router.get('/v1/advertisements/paginated', adController.getPaginatedAdvertisements);
-router.patch('/v1/advertisement/:id/status', isAuth, isAdmin, adController.updateAdvertisementStatus);
+router.post('/advertisement', isAuth, uploadSingle(uploadConfig), adController.createAdvertisement);
+router.get('/advertisements', adController.getAdvertisements);
+router.get('/advertisement/:id', adController.getAdvertisementById);
+router.put('/advertisement/:id', isAuth, uploadSingle(uploadConfig), adController.updateAdvertisementById);
+router.delete('/advertisement/:id', isAdmin, adController.deleteAdvertisementById);
+router.get('/advertisements/type/:type', adController.getAdvertisementsByType);
+router.get('/advertisements/paginated', adController.getPaginatedAdvertisements);
+router.patch('/advertisement/:id/status', isAuth, isAdmin, adController.updateAdvertisementStatus);
 
 module.exports = router;

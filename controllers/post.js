@@ -11,6 +11,7 @@ const postSchema = Joi.object({
   type: Joi.string().required(),
   description: Joi.string().required(),
   status: Joi.string().valid('PUBLISHED', 'REJECTED', 'PENDING').required(),
+  userId: Joi.string().required(),
 });
 
 // Create a new post
@@ -21,11 +22,18 @@ exports.createPost = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
+    const user = await prisma.user.findUnique({ where: { id: value.userId } });
+    if (!user) {
+      throw new CustomError('User not found', 404);
+    }
+
     const newPost = await prisma.post.create({
       data: {
         ...value,
         image: req.file ? req.file.path : null,
+        user: { connect: { id: value.userId } },
       },
+      include: { user: true, views: true },
     });
 
     res.status(201).json(response(201, true, 'Post created successfully', newPost));
@@ -44,7 +52,7 @@ exports.createPost = async (req, res, next) => {
 exports.getPosts = async (req, res, next) => {
   try {
     const posts = await prisma.post.findMany({
-      include: { views: true },
+      include: { views: true, user: true },
     });
 
     if (!posts.length) {
@@ -64,7 +72,7 @@ exports.getPostById = async (req, res, next) => {
     const { id } = req.params;
     const post = await prisma.post.findUnique({
       where: { id },
-      include: { views: true },
+      include: { views: true, user: true },
     });
 
     if (!post) {
@@ -92,6 +100,11 @@ exports.updatePostById = async (req, res, next) => {
       throw new CustomError('Post not found', 404);
     }
 
+    const user = await prisma.user.findUnique({ where: { id: value.userId } });
+    if (!user) {
+      throw new CustomError('User not found', 404);
+    }
+
     let updateData = { ...value };
     if (req.file) {
       updateData.image = req.file.path;
@@ -102,8 +115,11 @@ exports.updatePostById = async (req, res, next) => {
 
     const updatedPost = await prisma.post.update({
       where: { id },
-      data: updateData,
-      include: { views: true },
+      data: {
+        ...updateData,
+        user: { connect: { id: value.userId } },
+      },
+      include: { views: true, user: true },
     });
 
     res.status(200).json(response(200, true, 'Post updated successfully', updatedPost));
@@ -145,7 +161,7 @@ exports.getPostsByType = async (req, res, next) => {
     const { type } = req.params;
     const posts = await prisma.post.findMany({
       where: { type },
-      include: { views: true },
+      include: { views: true, user: true },
     });
 
     if (!posts.length) {
@@ -174,10 +190,15 @@ exports.addPostView = async (req, res, next) => {
       throw new CustomError('Post not found', 404);
     }
 
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new CustomError('User not found', 404);
+    }
+
     const view = await prisma.postView.create({
       data: {
-        postId: id,
-        userId,
+        post: { connect: { id } },
+        user: { connect: { id: userId } },
       },
     });
 
@@ -196,7 +217,7 @@ exports.getPaginatedPosts = async (req, res, next) => {
 
     const [posts, totalCount] = await Promise.all([
       prisma.post.findMany({
-        include: { views: true },
+        include: { views: true, user: true },
         skip: Number(skip),
         take: Number(limit),
         orderBy: { createdAt: 'desc' },
@@ -233,7 +254,7 @@ exports.updatePostStatus = async (req, res, next) => {
     const updatedPost = await prisma.post.update({
       where: { id },
       data: { status },
-      include: { views: true },
+      include: { views: true, user: true },
     });
 
     res.status(200).json(response(200, true, 'Post status updated successfully', updatedPost));

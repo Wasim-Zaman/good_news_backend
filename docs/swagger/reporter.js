@@ -1,63 +1,66 @@
 /**
  * @swagger
  * tags:
- *   name: Advertisements
- *   description: Advertisement management
+ *   name: Reporters
+ *   description: Reporter management
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Advertisement:
+ *     Reporter:
  *       type: object
  *       required:
- *         - advertisementType
- *         - postType
+ *         - name
+ *         - state
+ *         - district
+ *         - userId
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the advertisement
- *         advertisementType:
+ *           description: The auto-generated id of the reporter
+ *         name:
  *           type: string
- *           description: The type of the advertisement
- *         bannerType:
+ *           description: The name of the reporter
+ *         image:
  *           type: string
- *           description: The type of banner (if applicable)
- *         content:
+ *           description: The path to the reporter's image file
+ *         state:
  *           type: string
- *           description: The content of the advertisement
- *         postType:
+ *           description: The state of the reporter
+ *         district:
  *           type: string
- *           description: The type of post for the advertisement
+ *           description: The district of the reporter
+ *         constituency:
+ *           type: string
+ *           description: The constituency of the reporter (optional)
+ *         mandal:
+ *           type: string
+ *           description: The mandal of the reporter (optional)
  *         status:
  *           type: string
  *           enum: [PENDING, APPROVED, REJECTED]
- *           description: The status of the advertisement
- *         image:
- *           type: string
- *           description: The path to the advertisement's image file
- *         createdAt:
- *           type: string
- *           format: date-time
- *           description: The date the advertisement was created
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           description: The date the advertisement was last updated
+ *           description: The status of the reporter
  *         userId:
  *           type: string
  *           description: The ID of the associated user
- *         user:
- *           $ref: '#/components/schemas/User'
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the reporter was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the reporter was last updated
  */
 
 /**
  * @swagger
- * /api/advertisement/v1/advertisement:
+ * /api/reporter/v1/reporter:
  *   post:
- *     summary: Create a new advertisement
- *     tags: [Advertisements]
+ *     summary: Create a new reporter
+ *     tags: [Reporters]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -67,33 +70,36 @@
  *           schema:
  *             type: object
  *             required:
- *               - advertisementType
- *               - postType
+ *               - name
+ *               - state
+ *               - district
+ *               - userId
  *             properties:
- *               advertisementType:
+ *               name:
  *                 type: string
- *               bannerType:
+ *               state:
  *                 type: string
- *               content:
+ *               district:
  *                 type: string
- *               postType:
+ *               constituency:
+ *                 type: string
+ *               mandal:
  *                 type: string
  *               status:
  *                 type: string
  *                 enum: [PENDING, APPROVED, REJECTED]
+ *               userId:
+ *                 type: string
  *               image:
  *                 type: string
  *                 format: binary
- *               userId:
- *                 type: string
- *                 description: The ID of the associated user
  *     responses:
  *       201:
- *         description: The advertisement was successfully created
+ *         description: The reporter was successfully created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Advertisement'
+ *               $ref: '#/components/schemas/Reporter'
  *       400:
  *         description: Invalid input
  *       401:
@@ -102,29 +108,29 @@
 
 /**
  * @swagger
- * /api/advertisement/v1/advertisements:
+ * /api/reporter/v1/reporters:
  *   get:
- *     summary: Retrieve all advertisements
- *     tags: [Advertisements]
+ *     summary: Retrieve all reporters
+ *     tags: [Reporters]
  *     responses:
  *       200:
- *         description: A list of advertisements
+ *         description: A list of reporters
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Advertisement'
+ *                 $ref: '#/components/schemas/Reporter'
  *       404:
- *         description: No advertisements found
+ *         description: No reporters found
  */
 
 /**
  * @swagger
- * /api/advertisement/v1/advertisement/{id}:
+ * /api/reporter/v1/reporter/{id}:
  *   get:
- *     summary: Get an advertisement by ID
- *     tags: [Advertisements]
+ *     summary: Get a reporter by ID
+ *     tags: [Reporters]
  *     parameters:
  *       - in: path
  *         name: id
@@ -133,16 +139,16 @@
  *           type: string
  *     responses:
  *       200:
- *         description: The advertisement was found
+ *         description: The reporter was found
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Advertisement'
+ *               $ref: '#/components/schemas/Reporter'
  *       404:
- *         description: Advertisement not found
+ *         description: Reporter not found
  *   put:
- *     summary: Update an advertisement by ID
- *     tags: [Advertisements]
+ *     summary: Update a reporter by ID
+ *     tags: [Reporters]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -158,39 +164,40 @@
  *           schema:
  *             type: object
  *             properties:
- *               advertisementType:
+ *               name:
  *                 type: string
- *               bannerType:
+ *               state:
  *                 type: string
- *               content:
+ *               district:
  *                 type: string
- *               postType:
+ *               constituency:
+ *                 type: string
+ *               mandal:
  *                 type: string
  *               status:
  *                 type: string
  *                 enum: [PENDING, APPROVED, REJECTED]
+ *               userId:
+ *                 type: string
  *               image:
  *                 type: string
  *                 format: binary
- *               userId:
- *                 type: string
- *                 description: The ID of the associated user
  *     responses:
  *       200:
- *         description: The advertisement was updated
+ *         description: The reporter was updated
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Advertisement'
+ *               $ref: '#/components/schemas/Reporter'
  *       400:
  *         description: Invalid input
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Advertisement not found
+ *         description: Reporter not found
  *   delete:
- *     summary: Delete an advertisement by ID
- *     tags: [Advertisements]
+ *     summary: Delete a reporter by ID
+ *     tags: [Reporters]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -201,44 +208,19 @@
  *           type: string
  *     responses:
  *       200:
- *         description: The advertisement was deleted
+ *         description: The reporter was deleted
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Advertisement not found
+ *         description: Reporter not found
  */
 
 /**
  * @swagger
- * /api/advertisement/v1/advertisements/type/{type}:
+ * /api/reporter/v1/reporters/paginated:
  *   get:
- *     summary: Get advertisements by type
- *     tags: [Advertisements]
- *     parameters:
- *       - in: path
- *         name: type
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: A list of advertisements of the specified type
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Advertisement'
- *       404:
- *         description: No advertisements found for this type
- */
-
-/**
- * @swagger
- * /api/advertisement/v1/advertisements/paginated:
- *   get:
- *     summary: Get paginated advertisements
- *     tags: [Advertisements]
+ *     summary: Get paginated reporters
+ *     tags: [Reporters]
  *     parameters:
  *       - in: query
  *         name: page
@@ -269,10 +251,10 @@
  *                 data:
  *                   type: object
  *                   properties:
- *                     advertisements:
+ *                     reporters:
  *                       type: array
  *                       items:
- *                         $ref: '#/components/schemas/Advertisement'
+ *                         $ref: '#/components/schemas/Reporter'
  *                     currentPage:
  *                       type: integer
  *                     totalPages:
@@ -285,10 +267,10 @@
 
 /**
  * @swagger
- * /api/advertisement/v1/advertisement/{id}/status:
+ * /api/reporter/v1/reporter/{id}/status:
  *   patch:
- *     summary: Update advertisement status (admin only)
- *     tags: [Advertisements]
+ *     summary: Update reporter status (admin only)
+ *     tags: [Reporters]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -297,7 +279,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: Advertisement ID
+ *         description: Reporter ID
  *     requestBody:
  *       required: true
  *       content:
@@ -323,7 +305,7 @@
  *                 message:
  *                   type: string
  *                 data:
- *                   $ref: '#/components/schemas/Advertisement'
+ *                   $ref: '#/components/schemas/Reporter'
  *       400:
  *         description: Bad request
  *       401:
@@ -331,7 +313,7 @@
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Advertisement not found
+ *         description: Reporter not found
  *       500:
  *         description: Server error
  */

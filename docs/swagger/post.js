@@ -40,6 +40,11 @@
  *           type: string
  *           format: date-time
  *           description: The date the post was last updated
+ *         userId:
+ *           type: string
+ *           description: The ID of the associated user
+ *         user:
+ *           $ref: '#/components/schemas/User'
  */
 
 /**
@@ -81,6 +86,8 @@
  *               image:
  *                 type: string
  *                 format: binary
+ *               userId:
+ *                 type: string
  *     responses:
  *       201:
  *         description: The post was successfully created
@@ -162,6 +169,8 @@
  *               image:
  *                 type: string
  *                 format: binary
+ *               userId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: The post was updated

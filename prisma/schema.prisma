@@ -23,6 +23,9 @@ model User {
   fcmToken     String?
   timeZone     String?
   postViews    PostView[]
+  reporters    Reporter[]
+  posts        Post[]
+  advertisements Advertisement[]
 
   @@map("user")
 }
@@ -36,6 +39,8 @@ model Post {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   views       PostView[]
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
 }
 
 model Advertisement {
@@ -48,6 +53,25 @@ model Advertisement {
   status             Status @default(PENDING)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+}
+
+model Reporter {
+  id           String   @id @default(uuid())
+  name         String
+  image        String?
+  state        String
+  district     String
+  constituency String?
+  mandal       String?
+  status       Status   @default(PENDING)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("reporters")
 }
 
 enum Status {
