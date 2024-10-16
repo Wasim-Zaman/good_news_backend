@@ -11,13 +11,13 @@ const { deleteFile, fileExists } = require('../utils/file');
 const userSchema = Joi.object({
   name: Joi.string(),
   mobileNumber: Joi.string().required(),
-  fcmToken: Joi.string(),
-  timeZone: Joi.string(),
+  fcmToken: Joi.string().optional(),
+  timeZone: Joi.string().optional(),
   language: Joi.string().required(),
   state: Joi.string().required(),
   district: Joi.string().required(),
-  constituency: Joi.string().required(),
-  mandal: Joi.string().required(),
+  constituency: Joi.string().optional(),
+  mandal: Joi.string().optional(),
 });
 
 exports.login = async (req, res, next) => {
