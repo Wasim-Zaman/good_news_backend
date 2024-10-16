@@ -12,15 +12,32 @@ const uploadConfig = {
   filename: 'image',
 };
 
-// Post routes
+// Get all posts (paginated with search)
+router.get('/posts', postController.getAllPosts);
+
+// Get filtered posts
+router.get('/posts/filter', postController.getFilteredPosts);
+
+// Get posts for specific reporter
+router.get('/posts/reporter', isAuth, postController.getReporterPosts);
+
+// Create a new post
 router.post('/post', isAuth, uploadSingle(uploadConfig), postController.createPost);
-router.get('/posts', postController.getPosts);
-router.get('/post/:id', postController.getPostById);
-router.put('/post/:id', isAuth, uploadSingle(uploadConfig), postController.updatePostById);
-router.delete('/post/:id', isAdmin, postController.deletePostById);
-router.get('/posts/type/:type', postController.getPostsByType);
-router.post('/post/:id/view', postController.addPostView);
-router.get('/posts/paginated', postController.getPaginatedPosts);
-router.patch('/post/:id/status', isAuth, isAdmin, postController.updatePostStatus);
+
+// Get a single post
+router.get('/post/:id', isAuth, postController.viewPost);
+
+// Update post
+router.put('/post/:id', isAuth, uploadSingle(uploadConfig), postController.updatePost);
+
+// Delete post
+router.delete('/post/:id', isAuth, postController.deletePost);
+
+// Post interactions
+router.post('/post/:id/like', isAuth, postController.likePost);
+router.post('/post/:id/dislike', isAuth, postController.dislikePost);
+router.post('/post/:id/comment', isAuth, postController.commentOnPost);
+router.post('/post/:id/report', isAuth, postController.reportPost);
+router.get('/post/:id/download', isAuth, postController.downloadPost);
 
 module.exports = router;

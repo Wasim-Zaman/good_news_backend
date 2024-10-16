@@ -15,6 +15,9 @@
  *         - type
  *         - description
  *         - status
+ *         - language
+ *         - state
+ *         - district
  *       properties:
  *         id:
  *           type: string
@@ -25,13 +28,22 @@
  *         description:
  *           type: string
  *           description: The description of the post
+ *         image:
+ *           type: string
+ *           description: The path to the post's image file
  *         status:
  *           type: string
  *           enum: [PUBLISHED, REJECTED, PENDING]
  *           description: The status of the post
- *         image:
+ *         language:
  *           type: string
- *           description: The path to the post's image file
+ *           description: The language of the post
+ *         state:
+ *           type: string
+ *           description: The state associated with the post
+ *         district:
+ *           type: string
+ *           description: The district associated with the post
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -40,11 +52,15 @@
  *           type: string
  *           format: date-time
  *           description: The date the post was last updated
- *         userId:
+ *         reporterId:
  *           type: string
- *           description: The ID of the associated user
- *         user:
- *           $ref: '#/components/schemas/User'
+ *           description: The ID of the associated reporter
+ *         reporter:
+ *           $ref: '#/components/schemas/Reporter'
+ *         views:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/PostView'
  */
 
 /**
@@ -105,19 +121,53 @@
  * @swagger
  * /api/post/v1/posts:
  *   get:
- *     summary: Retrieve all posts
+ *     summary: Retrieve all posts (paginated with search)
  *     tags: [Posts]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term
  *     responses:
  *       200:
- *         description: A list of posts
+ *         description: Successful response
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Post'
- *       404:
- *         description: No posts found
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     posts:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Post'
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalCount:
+ *                       type: integer
+ *       500:
+ *         description: Server error
  */
 
 /**
@@ -232,33 +282,73 @@
 /**
  * @swagger
  * /api/post/v1/post/{id}/view:
- *   post:
- *     summary: Add a view to a post
+ *   get:
+ *     summary: View a post and increment view count
  *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userId
- *             properties:
- *               userId:
- *                 type: string
+ *         description: Post ID
  *     responses:
- *       201:
- *         description: View added successfully
- *       400:
- *         description: User ID is required
+ *       200:
+ *         description: Post viewed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     type:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     image:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                     language:
+ *                       type: string
+ *                     state:
+ *                       type: string
+ *                     district:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     reporterId:
+ *                       type: string
+ *                     reporter:
+ *                       $ref: '#/components/schemas/Reporter'
+ *                     views:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/PostView'
+ *                     viewCount:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: Post not found
+ *       500:
+ *         description: Server error
  */
 
 /**
@@ -362,4 +452,411 @@
  *         description: Post not found
  *       500:
  *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/post/v1/posts/filter:
+ *   get:
+ *     summary: Get filtered posts
+ *     tags: [Posts]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *         description: Post type
+ *       - in: query
+ *         name: language
+ *         schema:
+ *           type: string
+ *         description: Post language
+ *       - in: query
+ *         name: state
+ *         schema:
+ *           type: string
+ *         description: Post state
+ *       - in: query
+ *         name: district
+ *         schema:
+ *           type: string
+ *         description: Post district
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     posts:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Post'
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalCount:
+ *                       type: integer
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/post/v1/posts/reporter:
+ *   get:
+ *     summary: Get posts for specific reporter
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     posts:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Post'
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalCount:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Reporter not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     PostView:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         postId:
+ *           type: string
+ *         userId:
+ *           type: string
+ *         viewedAt:
+ *           type: string
+ *           format: date-time
+ */
+
+/**
+ * @swagger
+ * /api/post/v1/post/{id}/comment:
+ *   post:
+ *     summary: Add a comment to a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Post ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: The content of the comment
+ *     responses:
+ *       201:
+ *         description: Comment added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/post/v1/post/{id}/comments:
+ *   get:
+ *     summary: Get comments for a post
+ *     tags: [Posts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Post ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     comments:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Comment'
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalComments:
+ *                       type: integer
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/post/v1/post/{id}/report:
+ *   post:
+ *     summary: Report a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Post ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - reason
+ *             properties:
+ *               reason:
+ *                 type: string
+ *                 description: The reason for reporting the post
+ *     responses:
+ *       201:
+ *         description: Post reported successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Report'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/post/v1/post/{id}/reports:
+ *   get:
+ *     summary: Get reports for a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Post ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     reports:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Report'
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalReports:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Comment:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         content:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *         postId:
+ *           type: string
+ *         userId:
+ *           type: string
+ *         user:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *             name:
+ *               type: string
+ *             image:
+ *               type: string
+ *
+ *     Report:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         reason:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *         postId:
+ *           type: string
+ *         userId:
+ *           type: string
+ *         user:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *             name:
+ *               type: string
+ *             image:
+ *               type: string
  */

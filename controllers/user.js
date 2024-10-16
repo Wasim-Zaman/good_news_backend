@@ -30,7 +30,10 @@ exports.login = async (req, res, next) => {
     const { mobileNumber, fcmToken, timeZone } = value;
 
     // Check if the user already exists
-    let user = await prisma.user.findUnique({ where: { mobileNumber } });
+    let user = await prisma.user.findUnique({
+      where: { mobileNumber },
+      include: { reporter: true }, // Include reporter information
+    });
 
     // If the user does not exist, create a new user
     if (!user) {
@@ -45,6 +48,7 @@ exports.login = async (req, res, next) => {
           constituency: value.constituency,
           mandal: value.mandal,
         },
+        include: { reporter: true }, // Include reporter information
       });
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
@@ -55,6 +59,7 @@ exports.login = async (req, res, next) => {
           fcmToken: fcmToken || user.fcmToken,
           timeZone: timeZone || 'UTC',
         },
+        include: { reporter: true }, // Include reporter information
       });
     }
 
@@ -84,7 +89,10 @@ exports.updateUser = async (req, res, next) => {
     const { mobileNumber } = value;
 
     // Find the user by mobile number
-    let user = await prisma.user.findUnique({ where: { mobileNumber } });
+    let user = await prisma.user.findUnique({
+      where: { mobileNumber },
+      include: { reporter: true }, // Include reporter information
+    });
     if (!user) {
       throw new CustomError('User not found with the provided mobile number', 404);
     }
@@ -105,6 +113,7 @@ exports.updateUser = async (req, res, next) => {
         ...value,
         image,
       },
+      include: { reporter: true }, // Include reporter information
     });
 
     console.log(`User with mobile number: ${mobileNumber} updated successfully`);
@@ -129,6 +138,7 @@ exports.getUsers = async (req, res, next) => {
         where: {
           OR: [{ name: { contains: query } }, { mobileNumber: { contains: query } }],
         },
+        include: { reporter: true }, // Include reporter information
         skip: Number(skip),
         take: Number(limit),
       }),
@@ -161,7 +171,10 @@ exports.getUsers = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: { reporter: true }, // Include reporter information
+    });
 
     if (!user) {
       throw new CustomError('User not found', 404);
@@ -170,7 +183,10 @@ exports.deleteUser = async (req, res, next) => {
     if (user.image) {
       await deleteFile(user.image);
     }
-    const deletedUser = await prisma.user.delete({ where: { id } });
+    const deletedUser = await prisma.user.delete({
+      where: { id },
+      include: { reporter: true }, // Include reporter information
+    });
     console.log(`User with id: ${id} deleted successfully`);
     if (!deletedUser) {
       throw new CustomError('Failed to delete user', 500);
@@ -188,7 +204,17 @@ exports.getUser = async (req, res, next) => {
       throw new CustomError('Unauthorized: No user found in token', 401);
     }
 
-    res.status(200).json(response(200, true, 'User retrieved successfully', req.user));
+    // Fetch the user with reporter information
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: { reporter: true },
+    });
+
+    if (!user) {
+      throw new CustomError('User not found', 404);
+    }
+
+    res.status(200).json(response(200, true, 'User retrieved successfully', user));
   } catch (error) {
     next(error);
   }
@@ -197,7 +223,7 @@ exports.getUser = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
   try {
     // Extract data from request body
-    const { name, mobileNumber, timeZone } = req.body;
+    const { name, mobileNumber, timeZone, language, state, district, constituency, mandal } = req.body;
 
     // Create the new user
     const newUser = await prisma.user.create({
@@ -207,12 +233,13 @@ exports.createUser = async (req, res, next) => {
         mobileNumber,
         fcmToken: '',
         timeZone: timeZone || 'UTC',
-        language: '',
-        state: '',
-        district: '',
-        constituency: '',
-        mandal: '',
+        language,
+        state,
+        district,
+        constituency,
+        mandal,
       },
+      include: { reporter: true }, // Include reporter information
     });
 
     // Return success response

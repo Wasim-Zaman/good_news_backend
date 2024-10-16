@@ -28,38 +28,12 @@ model User {
   constituency String
   mandal       String
   postViews    PostView[]
-  reporters    Reporter[]
-  posts        Post[]
   advertisements Advertisement[]
+  reporter     Reporter?  // This line establishes the relation
+  comments     Comment[]
+  reports      Report[]
 
   @@map("user")
-}
-
-model Post {
-  id          String     @id @default(uuid())
-  type        String
-  image       String?
-  description String
-  status      Status
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  views       PostView[]
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
-}
-
-model Advertisement {
-  id                 String   @id @default(uuid())
-  advertisementType  String
-  bannerType         String?
-  image              String?
-  content            String?
-  postType           String
-  status             Status @default(PENDING)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  userId            String
-  user              User     @relation(fields: [userId], references: [id])
 }
 
 model Reporter {
@@ -73,10 +47,78 @@ model Reporter {
   status       Status   @default(PENDING)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  userId       String
+  userId       String   @unique
   user         User     @relation(fields: [userId], references: [id])
+  posts        Post[]
 
-  @@map("reporters")
+  @@map("reporter")
+}
+
+model Post {
+  id             String   @id @default(uuid())
+  type           String
+  description    String
+  image          String?
+  status         String
+  language       String?
+  state          String?
+  district       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  reporterId     String
+  reporter       Reporter @relation(fields: [reporterId], references: [id])
+  views          PostView[]
+  likedBy        Json     @default("[]") // Array of user IDs who liked the post
+  dislikedBy     Json     @default("[]") // Array of user IDs who disliked the post
+  downloadedBy   Json     @default("[]") // Array of user IDs who downloaded the post
+  likeCount      Int      @default(0)
+  dislikeCount   Int      @default(0)
+  downloadCount  Int      @default(0)
+  comments       Comment[]
+  reports        Report[]
+
+  @@map("post")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("comment")
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  reason    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("report")
+}
+
+
+model Advertisement {
+  id                 String   @id @default(uuid())
+  advertisementType  String
+  bannerType         String?
+  image              String?
+  content            String?
+  postType           String
+  status             Status @default(PENDING)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
 }
 
 enum Status {

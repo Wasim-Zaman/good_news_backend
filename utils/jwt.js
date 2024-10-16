@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 class JWT {
   /**
@@ -12,8 +12,8 @@ class JWT {
   static createToken(
     payload,
     options = {
-      expiresIn: "1h",
-      algorithm: "HS256",
+      expiresIn: '1h',
+      algorithm: 'HS256',
     }
   ) {
     return jwt.sign(payload, process.env.JWT_SECRET, options);
