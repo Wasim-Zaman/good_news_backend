@@ -31,7 +31,7 @@ var options = {
   apis: [
     // path.join(__dirname, "../docs/swagger/testDocs.js"),
     path.join(__dirname, '../docs/swagger/admin.js'),
-    // path.join(__dirname, "../docs/swagger/category.js"),
+    path.join(__dirname, '../docs/swagger/category.js'),
     // path.join(__dirname, "../docs/swagger/blog.js"),
     // path.join(__dirname, "../docs/swagger/rss.js"),
     // path.join(__dirname, "../docs/swagger/ad.js"),
