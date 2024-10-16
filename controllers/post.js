@@ -156,9 +156,17 @@ exports.createPost = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    const reporter = await prisma.reporter.findUnique({ where: { userId: req.user.id } });
+    const reporter = await prisma.reporter.findUnique({
+      where: { userId: req.user.id },
+      include: { user: true },
+    });
     if (!reporter) {
       throw new CustomError('Reporter not found', 404);
+    }
+
+    // Check if the reporter's status is APPROVED
+    if (reporter.user.status !== 'APPROVED') {
+      throw new CustomError('Only reporters with APPROVED status can create posts', 403);
     }
 
     const newPost = await prisma.post.create({

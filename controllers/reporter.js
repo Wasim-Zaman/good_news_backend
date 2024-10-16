@@ -13,7 +13,7 @@ const reporterSchema = Joi.object({
   district: Joi.string().required(),
   constituency: Joi.string().allow(null, ''),
   mandal: Joi.string().allow(null, ''),
-  status: Joi.string().valid('PENDING', 'APPROVED', 'REJECTED').default('PENDING'),
+  status: Joi.string().valid('WAITING', 'APPROVED', 'REJECTED').default('APPROVED'),
   userId: Joi.string().required(),
 });
 

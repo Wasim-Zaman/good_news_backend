@@ -44,7 +44,7 @@ model Reporter {
   district     String
   constituency String?
   mandal       String?
-  status       Status   @default(PENDING)
+  status       ReporterStatus   @default(APPROVED)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   userId       String   @unique
@@ -52,6 +52,12 @@ model Reporter {
   posts        Post[]
 
   @@map("reporter")
+}
+
+enum ReporterStatus {
+    WAITING
+    APPROVED
+    REJECTED
 }
 
 model Post {
