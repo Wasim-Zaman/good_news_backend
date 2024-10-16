@@ -1,11 +1,18 @@
 const express = require('express');
-const router = express.Router();
+const { uploadSingle } = require('multermate');
+
 const reporterController = require('../controllers/reporter');
-const upload = require('../middleware/upload');
-const { authenticate } = require('../middleware/auth');
+const authenticate = require('../middleware/isUser');
+
+const router = express.Router();
+const uploadConfig = {
+  destination: 'uploads',
+  fileTypes: ['images'],
+  filename: 'image',
+};
 
 // Create a new reporter
-router.post('/reporter', authenticate, upload.single('image'), reporterController.createReporter);
+router.post('/reporter', authenticate, uploadSingle(uploadConfig), reporterController.createReporter);
 
 // Get all reporters
 router.get('/reporters', reporterController.getReporters);
@@ -14,7 +21,7 @@ router.get('/reporters', reporterController.getReporters);
 router.get('/reporter/:id', reporterController.getReporterById);
 
 // Update reporter by ID
-router.put('/reporter/:id', authenticate, upload.single('image'), reporterController.updateReporterById);
+router.put('/reporter/:id', authenticate, uploadSingle(uploadConfig), reporterController.updateReporterById);
 
 // Delete reporter by ID
 router.delete('/reporter/:id', authenticate, reporterController.deleteReporterById);
