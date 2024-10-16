@@ -48,6 +48,26 @@ The project follows a modular structure with separate routes and controllers for
 
 The API is documented using Swagger. You can access the Swagger UI at `/api-docs` when the server is running.
 
+## Environment Variables
+
+The project uses environment variables for configuration. These are stored in a `.env` file in the root directory. For security reasons, this file is not committed to version control.
+
+A `.env.example` file is provided as a template. To set up your environment:
+
+1. Copy `.env.example` to a new file named `.env`
+2. Fill in the values in `.env` with your specific configuration
+
+Required environment variables:
+
+- `PORT`: The port on which the server will run
+- `JWT_SECRET`: Secret key for JWT token generation and verification
+- `DATABASE_URL`: MySQL database connection string
+- `ADMIN_EMAIL`: Email for the admin account
+- `ADMIN_PASSWORD`: Password for the admin account
+- `DOMAIN`: The domain where the application is hosted
+
+Never commit your actual `.env` file to version control, as it contains sensitive information.
+
 ## Setup and Installation
 
 1. Clone the repository
